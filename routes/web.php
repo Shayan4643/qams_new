@@ -11,6 +11,17 @@ use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\StudentAssignmentController;
 use App\Http\Controllers\NotificationController;
 
+
+// Temporary route for Vercel migrations - Delete this after first deployment!
+Route::get('/migrate', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return "Migration successful: " . \Illuminate\Support\Facades\Artisan::output();
+    } catch (\Exception $e) {
+        return "Migration failed: " . $e->getMessage();
+    }
+});
+
 Route::get('/', function () {
     return Auth::check() ? redirect('/dashboard') : view('index');
 });
