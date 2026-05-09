@@ -22,7 +22,9 @@ return new class extends Migration
         });
 
         // Copy user_id → student_id for existing rows
-        \DB::statement('UPDATE quiz_attempts SET student_id = user_id WHERE student_id IS NULL');
+        if (Schema::hasColumn('quiz_attempts', 'user_id') && Schema::hasColumn('quiz_attempts', 'student_id')) {
+            \DB::statement('UPDATE quiz_attempts SET student_id = user_id WHERE student_id IS NULL');
+        }
 
         // assignment_submissions: add student_id alias, status, teacher_feedback
         Schema::table('assignment_submissions', function (Blueprint $table) {
@@ -38,8 +40,13 @@ return new class extends Migration
         });
 
         // Copy user_id → student_id + feedback → teacher_feedback for existing rows
-        \DB::statement('UPDATE assignment_submissions SET student_id = user_id WHERE student_id IS NULL');
-        \DB::statement('UPDATE assignment_submissions SET teacher_feedback = feedback WHERE teacher_feedback IS NULL AND feedback IS NOT NULL');
+        if (Schema::hasColumn('assignment_submissions', 'user_id') && Schema::hasColumn('assignment_submissions', 'student_id')) {
+            \DB::statement('UPDATE assignment_submissions SET student_id = user_id WHERE student_id IS NULL');
+        }
+        
+        if (Schema::hasColumn('assignment_submissions', 'feedback') && Schema::hasColumn('assignment_submissions', 'teacher_feedback')) {
+            \DB::statement('UPDATE assignment_submissions SET teacher_feedback = feedback WHERE teacher_feedback IS NULL AND feedback IS NOT NULL');
+        }
 
         // quizzes: add teacher_id and published columns
         Schema::table('quizzes', function (Blueprint $table) {
@@ -52,7 +59,9 @@ return new class extends Migration
         });
 
         // Sync published from is_published
-        \DB::statement("UPDATE quizzes SET published = CASE WHEN is_published = 1 THEN 'yes' ELSE 'no' END");
+        if (Schema::hasColumn('quizzes', 'is_published') && Schema::hasColumn('quizzes', 'published')) {
+            \DB::statement("UPDATE quizzes SET published = CASE WHEN is_published = 1 THEN 'yes' ELSE 'no' END");
+        }
 
         // assignments: add teacher_id and published columns
         Schema::table('assignments', function (Blueprint $table) {
@@ -64,7 +73,9 @@ return new class extends Migration
             }
         });
 
-        \DB::statement("UPDATE assignments SET published = CASE WHEN is_published = 1 THEN 'yes' ELSE 'no' END");
+        if (Schema::hasColumn('assignments', 'is_published') && Schema::hasColumn('assignments', 'published')) {
+            \DB::statement("UPDATE assignments SET published = CASE WHEN is_published = 1 THEN 'yes' ELSE 'no' END");
+        }
 
         // classes: add active column
         Schema::table('classes', function (Blueprint $table) {
