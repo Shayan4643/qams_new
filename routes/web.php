@@ -15,10 +15,10 @@ use App\Http\Controllers\NotificationController;
 // Temporary route for Vercel migrations - Delete this after first deployment!
 Route::get('/migrate', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        return "Migration successful: " . \Illuminate\Support\Facades\Artisan::output();
+        Artisan::call('migrate:fresh', ['--force' => true]);
+        return "Database migration successful! <br><br> Output: <pre>" . Artisan::output() . "</pre>";
     } catch (\Exception $e) {
-        return "Migration failed: " . $e->getMessage();
+        return "Migration failed: " . $e->getMessage() . "<br><br> SQL: " . (\DB::getQueryLog() ? json_encode(\DB::getQueryLog()) : 'No log');
     }
 });
 
