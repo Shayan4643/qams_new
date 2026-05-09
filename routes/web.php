@@ -12,15 +12,7 @@ use App\Http\Controllers\StudentAssignmentController;
 use App\Http\Controllers\NotificationController;
 
 
-// Temporary route for Vercel migrations - Delete this after first deployment!
-Route::get('/migrate', function () {
-    try {
-        Artisan::call('migrate:fresh', ['--force' => true]);
-        return "Database migration successful! <br><br> Output: <pre>" . Artisan::output() . "</pre>";
-    } catch (\Exception $e) {
-        return "Migration failed: " . $e->getMessage() . "<br><br> SQL: " . (\DB::getQueryLog() ? json_encode(\DB::getQueryLog()) : 'No log');
-    }
-});
+
 
 Route::get('/', function () {
     return Auth::check() ? redirect('/dashboard') : view('index');
