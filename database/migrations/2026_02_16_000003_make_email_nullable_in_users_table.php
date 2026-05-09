@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // SQLite (test env) does not support this MODIFY syntax.
-        if (DB::getDriverName() === 'sqlite') {
-            return;
-        }
-
-        if (Schema::hasColumn('users', 'email')) {
-            DB::statement('ALTER TABLE `users` MODIFY `email` VARCHAR(255) NULL');
-        }
+        Schema::table('users', function ($table) {
+            $table->string('email')->nullable()->change();
+        });
     }
 
     /**
@@ -26,12 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (DB::getDriverName() === 'sqlite') {
-            return;
-        }
-
-        if (Schema::hasColumn('users', 'email')) {
-            DB::statement('ALTER TABLE `users` MODIFY `email` VARCHAR(255) NOT NULL');
-        }
+        Schema::table('users', function ($table) {
+            $table->string('email')->nullable(false)->change();
+        });
     }
 };
